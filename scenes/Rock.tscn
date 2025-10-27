@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwf2yj3yn8vsy"]
+
+[ext_resource type="Script" path="res://scripts/Rock.gd" id="1_rock_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
+size = Vector2(64, 64)
+
+[node name="Rock" type="StaticBody2D"]
+script = ExtResource("1_rock_script")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(0.619608, 0.619608, 0.619608, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_rock")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="ClickShape" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("RectangleShape2D_rock")
+
+[connection signal="input_event" from="ClickArea" to="." method="_on_click_area_input_event"]

@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "rocks": [
+    {
+      "id": "stone_rock",
+      "name": "Stone Rock",
+      "hp": 1,
+      "color_hex": "#9E9E9E",
+      "loot_table": {
+        "common": ["ruby_small", "sapphire_small"],
+        "uncommon": ["emerald_small"],
+        "rare": ["topaz_small"]
+      },
+      "weights": {
+        "common": 0.70,
+        "uncommon": 0.25,
+        "rare": 0.05
+      },
+      "min_drops": 5,
+      "max_drops": 10
+    },
+    {
+      "id": "granite_rock",
+      "name": "Granite Rock",
+      "hp": 2,
+      "color_hex": "#757575",
+      "loot_table": {
+        "common": ["ruby_small", "sapphire_small"],
+        "uncommon": ["emerald_small", "amethyst_small"],
+        "rare": ["topaz_small", "diamond_small"]
+      },
+      "weights": {
+        "common": 0.60,
+        "uncommon": 0.30,
+        "rare": 0.10
+      },
+      "min_drops": 7,
+      "max_drops": 12
+    }
+  ]
+}
