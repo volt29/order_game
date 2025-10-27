@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "minerals": [
+    {
+      "id": "ruby_small",
+      "name": "Ruby Shard",
+      "shape": "triangle",
+      "color": "red",
+      "rarity": "common",
+      "points": 10,
+      "color_hex": "#E57373"
+    },
+    {
+      "id": "sapphire_small",
+      "name": "Sapphire",
+      "shape": "circle",
+      "color": "blue",
+      "rarity": "common",
+      "points": 10,
+      "color_hex": "#64B5F6"
+    },
+    {
+      "id": "emerald_small",
+      "name": "Emerald Cut",
+      "shape": "square",
+      "color": "green",
+      "rarity": "uncommon",
+      "points": 20,
+      "color_hex": "#81C784"
+    },
+    {
+      "id": "topaz_small",
+      "name": "Topaz Gem",
+      "shape": "hexagon",
+      "color": "yellow",
+      "rarity": "rare",
+      "points": 50,
+      "color_hex": "#FFD54F"
+    },
+    {
+      "id": "amethyst_small",
+      "name": "Amethyst Cluster",
+      "shape": "star",
+      "color": "purple",
+      "rarity": "rare",
+      "points": 50,
+      "color_hex": "#BA68C8"
+    },
+    {
+      "id": "diamond_small",
+      "name": "Diamond",
+      "shape": "square",
+      "color": "white",
+      "rarity": "epic",
+      "points": 100,
+      "color_hex": "#EEEEEE"
+    }
+  ]
+}
