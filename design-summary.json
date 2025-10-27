@@ -1,0 +1,441 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "date": "2025-10-27",
+    "project_name": "Order Game",
+    "genre": "Relaxing puzzle, zen mining, sorting simulator",
+    "target_platforms": ["PC", "Mobile (future)"],
+    "session_length_minutes": [3, 8],
+    "mvp_duration_weeks": [6, 8]
+  },
+  "pitch": {
+    "tagline": "Break rocks, collect minerals, sort at your own pace—closure without stress.",
+    "target_audience": "Busy adults seeking calm and accomplishment",
+    "mood_keywords": ["Mindful", "Cozy", "Organizer's Delight", "Non-competitive", "Visual ASMR", "Comfort Gaming"],
+    "unique_selling_point": "No timers, no penalties—pure satisfying tidying simulation with pixel art charm."
+  },
+  "core_loop": {
+    "steps": [
+      "Destroy: Player clicks rock → it shatters → releases 5-15 mineral particles",
+      "Collect: Minerals scatter (2D physics) → player collects via auto-zone or tap",
+      "Sort: Player drags minerals into bins (by color/shape/rarity) → earn points",
+      "Repeat: New rocks spawn → unlock better tools and new biomes"
+    ],
+    "loop_flow": "Destroy → Collect → Sort → Repeat (no fail state, no timers)"
+  },
+  "systems": [
+    {
+      "name": "Destruction and Physics",
+      "description": "Click rock to reduce HP → break triggers particle scatter with 2D physics → minerals settle within 3 seconds",
+      "key_features": ["Rock HP (1-5)", "Visual crack progression", "Particle burst on break", "Gentle gravity + friction"]
+    },
+    {
+      "name": "Mineral Generation",
+      "description": "Data-driven loot tables (minerals.json) define colors, shapes, rarities, and point values",
+      "key_features": ["6 colors (red/blue/green/yellow/purple/white)", "5 shapes (circle/triangle/square/hexagon/star)", "4 rarities (common 70% / uncommon 20% / rare 9% / epic 1%)", "Weighted random generation per rock type"]
+    },
+    {
+      "name": "Collection",
+      "description": "Auto-collect zone (100px radius) or manual tap → minerals fly to inventory with animation",
+      "key_features": ["Smooth lerp animation", "Gentle 'ping' SFX", "Inventory counter updates (+1)"]
+    },
+    {
+      "name": "Sorting",
+      "description": "Drag-drop minerals into bins (criteria: color, shape, rarity) → correct sort rewards points",
+      "key_features": ["Bins have capacity (e.g. 10/10)", "Correct sort: 'clink' SFX + points", "Mismatch: bounce back (no penalty)", "Bin completion: sparkle + bonus + chime"]
+    },
+    {
+      "name": "Scoring (Non-Punishing)",
+      "description": "Points are positive reinforcement only—no penalties for slow play or mistakes",
+      "key_features": ["Break rock: +5", "Collect: +10 to +100 (by rarity)", "Sort: +10 per correct", "Bin complete: +50 bonus", "Optional combo: +25 for 5 correct in row (no penalty on break)"]
+    },
+    {
+      "name": "Progression (Comfort-First)",
+      "description": "Unlock new rocks, tools, and biomes at organic pace (no grind)",
+      "key_features": ["5 tiers (Tier 1 at 20 rocks broken)", "Unlocks: new rock types, +minerals, pickaxe tool, custom bins, Zen Mode", "Biomes: Quarry (start) → Forest → Cave (post-MVP)", "Auto-save after each bin completion"]
+    }
+  ],
+  "ux_ui": {
+    "pc": {
+      "input": {
+        "mouse": ["Left Click: break rock", "Drag: move mineral to bin", "Right Click: tooltip (optional)"],
+        "keyboard_shortcuts": ["1-6: select bin", "Space: pause", "Tab: cycle minerals", "Z: undo", "Esc: settings"]
+      },
+      "layout": "Top: score + settings | Middle: playfield (rocks + minerals) | Bottom: inventory + sorting bins"
+    },
+    "mobile": {
+      "input": {
+        "touch": ["Tap rock: break", "Tap mineral: collect", "Drag to bin: sort", "Two-finger swipe up: pause"],
+        "haptics": ["Rock break: medium (200ms)", "Correct sort: light (50ms)", "Bin complete: strong (300ms)", "Error: gentle (100ms)"]
+      },
+      "layout": "Portrait: Top 10% info | Middle 40% playfield | 20% inventory strip | Bottom 30% bins (thumb zone)",
+      "ergonomics": "One-handed play, bottom UI elements in thumb reach"
+    },
+    "hud": {
+      "minimal": true,
+      "elements": ["Score counter (top-right, toggleable)", "Bin progress (e.g. 7/10)", "Settings button"],
+      "zen_mode": ["Hides score", "Adds auto-sorter hints", "Slower particle scatter", "Optional meditation prompts"]
+    }
+  },
+  "art_direction": {
+    "style": "2D pixel art (16x16 or 32x32 base sprites, scaled 2x-4x)",
+    "mood": "Cozy, soft, slightly stylized (Stardew Valley meets A Short Hike)",
+    "color_palette": {
+      "colorblind_safe": true,
+      "colors": [
+        {"name": "Soft Red", "hex": "#E57373", "use": "Rubies"},
+        {"name": "Ocean Blue", "hex": "#64B5F6", "use": "Sapphires"},
+        {"name": "Forest Green", "hex": "#81C784", "use": "Emeralds"},
+        {"name": "Sunny Yellow", "hex": "#FFD54F", "use": "Topazes"},
+        {"name": "Royal Purple", "hex": "#BA68C8", "use": "Amethysts"},
+        {"name": "Pearl White", "hex": "#EEEEEE", "use": "Diamonds"},
+        {"name": "UI Gray", "hex": "#424242", "use": "Backgrounds"},
+        {"name": "Accent Cream", "hex": "#FFF8E1", "use": "Highlights"}
+      ]
+    },
+    "rock_types": [
+      {"name": "Stone Rock", "appearance": "Gray, blocky, simple cracks"},
+      {"name": "Granite Rock", "appearance": "Speckled, darker gray"},
+      {"name": "Marble Rock", "appearance": "White with gray veins"}
+    ],
+    "biomes": [
+      {"name": "Quarry", "visuals": "Neutral sky gradient, flat horizon", "status": "MVP"},
+      {"name": "Forest", "visuals": "Parallax trees, dappled sunlight, leaves", "status": "Post-MVP"},
+      {"name": "Cave", "visuals": "Stalactites, glowing crystals, dark", "status": "Post-MVP"}
+    ]
+  },
+  "audio": {
+    "sfx": [
+      {"action": "Rock Hit", "description": "Soft thunk (mallet on stone)", "volume_percent": 70},
+      {"action": "Rock Break", "description": "Crystalline shatter 'crrsh'", "volume_percent": 70},
+      {"action": "Mineral Collect", "description": "Gentle ping (glass chime)", "volume_percent": 70},
+      {"action": "Correct Sort", "description": "Warm clink (gem into box)", "volume_percent": 70},
+      {"action": "Bin Complete", "description": "3-note chime (C-E-G major)", "volume_percent": 70},
+      {"action": "Mismatch", "description": "Soft boop (non-jarring)", "volume_percent": 70}
+    ],
+    "music": [
+      {"track": "Gentle Quarry", "bpm": 60, "mood": "Calm, neutral", "usage": "Main loop (Quarry biome)", "status": "MVP"},
+      {"track": "Forest Whispers", "bpm": 55, "mood": "Serene, nature", "usage": "Forest biome", "status": "Post-MVP"},
+      {"track": "Zen Mode Track", "bpm": 45, "mood": "Meditative, minimal", "usage": "Zen Mode", "status": "Post-MVP"}
+    ],
+    "music_style": "Ambient, lo-fi, minimal piano/synth, no percussion, layered pads",
+    "volume_mix": {
+      "sfx_default_percent": 70,
+      "music_default_percent": 30,
+      "adjustable": true,
+      "mute_toggle": true
+    }
+  },
+  "technology": {
+    "engine": {
+      "name": "Godot",
+      "version": "4.3+",
+      "rationale": "Open-source, excellent 2D workflow, cross-platform (PC/Web/Mobile), GDScript for fast iteration, no royalties"
+    },
+    "architecture": {
+      "modular": true,
+      "core_modules": [
+        {"name": "RockBreaker", "responsibility": "Detect clicks, reduce HP, trigger break event"},
+        {"name": "MineralSpawner", "responsibility": "Roll loot table, spawn minerals with physics"},
+        {"name": "CollectionZone", "responsibility": "Auto-collect minerals in radius"},
+        {"name": "SortingSystem", "responsibility": "Validate drag-drop, award points, manage bins"},
+        {"name": "ProgressionManager", "responsibility": "Track unlocks, check triggers, save state"},
+        {"name": "DataLoader", "responsibility": "Load minerals.json, rocks.json at runtime"}
+      ],
+      "communication": "Godot Signals (event-driven, decoupled)"
+    },
+    "data_driven": {
+      "enabled": true,
+      "config_files": [
+        {"file": "minerals.json", "contains": "Mineral definitions (id, name, shape, color, rarity, points, sprite)"},
+        {"file": "rocks.json", "contains": "Rock types (HP, sprite, loot tables, weights)"},
+        {"file": "progression.json", "contains": "Unlock tiers and triggers"},
+        {"file": "biomes.json", "contains": "Biome configs (future)"}
+      ],
+      "benefits": ["No code changes for content", "Easy balancing", "Designer-friendly", "Localization ready"]
+    },
+    "performance": {
+      "target_fps": 60,
+      "platforms": [
+        {"platform": "PC (mid-range)", "resolution": "1920x1080", "max_particles": 100},
+        {"platform": "Mobile (mid-tier)", "resolution": "1080x1920", "max_particles": 50},
+        {"platform": "Web (Chrome)", "resolution": "1280x720", "max_particles": 75}
+      ],
+      "optimizations": [
+        "Object pooling (pre-instantiate 100 mineral nodes)",
+        "Disable physics on resting particles (after 3s)",
+        "Batch sprites into TextureAtlas (reduce draw calls)",
+        "Limit concurrent SFX to 8",
+        "Use .ogg for music, .wav for SFX"
+      ]
+    }
+  },
+  "mvp_features": [
+    {
+      "id": 1,
+      "feature": "Rock Breaking",
+      "description": "Click rock → HP decreases → breaks with SFX",
+      "acceptance_criteria": {
+        "given": "A rock with 1 HP is on screen",
+        "when": "Player clicks it",
+        "then": "Rock shatters, plays SFX, spawns 5-10 minerals"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 2,
+      "feature": "Mineral Spawning",
+      "description": "Break rock → particles scatter with physics",
+      "acceptance_criteria": {
+        "given": "Rock breaks",
+        "when": "Loot table is rolled",
+        "then": "Minerals spawn at break position with random velocities, settle within 3s"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 3,
+      "feature": "Auto-Collection",
+      "description": "Minerals near cursor auto-collect",
+      "acceptance_criteria": {
+        "given": "Minerals are resting",
+        "when": "Cursor is within 100px",
+        "then": "Minerals fly to inventory with 'ping' SFX"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 4,
+      "feature": "Sorting Bins (2 types)",
+      "description": "Drag mineral to Red or Blue bin",
+      "acceptance_criteria": {
+        "given": "Player drags ruby to Red bin",
+        "when": "Drop released",
+        "then": "Mineral locks in, plays 'clink', bin progress updates (5/10)"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 5,
+      "feature": "Bin Completion Reward",
+      "description": "Full bin → bonus points + chime",
+      "acceptance_criteria": {
+        "given": "Bin reaches capacity (10/10)",
+        "when": "Last mineral sorted",
+        "then": "Sparkle effect, +50 bonus, harmonious chime plays"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 6,
+      "feature": "Score System",
+      "description": "Points for breaking, collecting, sorting",
+      "acceptance_criteria": {
+        "given": "Player breaks 1 rock, collects 5 rubies, sorts 3 correctly",
+        "when": "Actions complete",
+        "then": "Score increases by 5 + 50 + 30 = 85 points"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 7,
+      "feature": "Progression Tier 1",
+      "description": "Unlock at 20 rocks broken",
+      "acceptance_criteria": {
+        "given": "Player breaks 20th rock",
+        "when": "Trigger checked",
+        "then": "Unlock notification appears, Granite Rock available, +3 new minerals"
+      },
+      "priority": "P1"
+    },
+    {
+      "id": 8,
+      "feature": "Save/Load System",
+      "description": "Auto-save after bin completion",
+      "acceptance_criteria": {
+        "given": "Player completes a bin",
+        "when": "Bin full event fires",
+        "then": "Game state saved to LocalStorage; reloading restores state"
+      },
+      "priority": "P1"
+    },
+    {
+      "id": 9,
+      "feature": "UI: HUD (Score, Settings)",
+      "description": "Minimal top bar with score + settings button",
+      "acceptance_criteria": {
+        "given": "Game running",
+        "when": "HUD visible",
+        "then": "Score updates real-time, settings button opens pause menu"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 10,
+      "feature": "UI: Inventory Panel",
+      "description": "Shows collected minerals (icon + count)",
+      "acceptance_criteria": {
+        "given": "Player has 5 rubies, 3 sapphires",
+        "when": "Inventory panel rendered",
+        "then": "Shows [💎5] [🔷3]"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 11,
+      "feature": "Audio: Core SFX (5 sounds)",
+      "description": "Break, collect, sort, complete, error SFX",
+      "acceptance_criteria": {
+        "given": "Any of 5 core actions occur",
+        "when": "SFX triggered",
+        "then": "Sound plays at 70% volume, no overlap glitches"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 12,
+      "feature": "Music: 1 Ambient Track",
+      "description": "Loops gently during gameplay",
+      "acceptance_criteria": {
+        "given": "Game starts",
+        "when": "Music track 'Gentle Quarry' plays",
+        "then": "Loops seamlessly, volume at 30%, no clicks/pops"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 13,
+      "feature": "PC Controls",
+      "description": "Mouse click + drag",
+      "acceptance_criteria": {
+        "given": "Player uses mouse",
+        "when": "Clicking rock and dragging mineral",
+        "then": "Actions work with <50ms latency, no missed inputs"
+      },
+      "priority": "P0"
+    },
+    {
+      "id": 14,
+      "feature": "Settings Menu",
+      "description": "Volume sliders, colorblind toggle",
+      "acceptance_criteria": {
+        "given": "Player opens settings (Escape key)",
+        "when": "Adjusting sliders",
+        "then": "Audio volumes change immediately; colorblind mode adds gem patterns"
+      },
+      "priority": "P1"
+    },
+    {
+      "id": 15,
+      "feature": "Tutorial (3 Tooltips)",
+      "description": "First-time hints for tap, collect, sort",
+      "acceptance_criteria": {
+        "given": "First launch",
+        "when": "Game starts",
+        "then": "3 tooltips appear sequentially, dismissable, never show again"
+      },
+      "priority": "P1"
+    }
+  ],
+  "out_of_scope_mvp": [
+    "Mobile touch controls (Week 9+)",
+    "Zen Mode (Week 10+)",
+    "Forest/Cave biomes (Week 12+)",
+    "Custom bin criteria editor (Week 11+)",
+    "Social features, leaderboards (not planned)",
+    "Monetization (not planned)"
+  ],
+  "risks": [
+    {
+      "id": 1,
+      "risk": "Physics performance on web builds",
+      "likelihood": "Medium",
+      "impact": "High",
+      "mitigation": "Implement object pooling (Week 2), limit particles to 75 on web, profile early (Week 3)"
+    },
+    {
+      "id": 2,
+      "risk": "Drag-drop sorting feels clunky",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "mitigation": "Prototype sorting in Week 3, playtest with 3+ users, add snap-to-bin magnetism if needed"
+    },
+    {
+      "id": 3,
+      "risk": "Scoring system feels stressful",
+      "likelihood": "Low",
+      "impact": "High",
+      "mitigation": "Design scores as 'bonus' not 'goal', playtest emphasis (Week 6), add 'Hide Score' toggle if negative feedback"
+    },
+    {
+      "id": 4,
+      "risk": "Art asset delays",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "mitigation": "Use free pixel art placeholders (itch.io, OpenGameArt), commission 1-2 key sprites only if time allows"
+    },
+    {
+      "id": 5,
+      "risk": "Scope creep with mobile controls",
+      "likelihood": "High",
+      "impact": "Medium",
+      "mitigation": "Lock MVP to PC-only, document mobile design in separate spec (Week 8), no mobile work until MVP validated"
+    }
+  ],
+  "metrics": {
+    "quantitative": [
+      {
+        "metric": "Average session length",
+        "target": "5-8 minutes",
+        "measurement": "Track time from game start to quit (analytics)"
+      },
+      {
+        "metric": "Session completion rate",
+        "target": ">70%",
+        "measurement": "% of sessions where player completes ≥1 bin before quitting"
+      },
+      {
+        "metric": "Return rate (D1)",
+        "target": ">40%",
+        "measurement": "% of players who return within 24 hours (LocalStorage timestamp)"
+      },
+      {
+        "metric": "Error rate (mis-sorts)",
+        "target": "<10% of sorts",
+        "measurement": "Track incorrect sorts / total sorts"
+      },
+      {
+        "metric": "Hide Score usage",
+        "target": "10-20%",
+        "measurement": "% players who toggle 'Hide Score' (stress reduction proxy)"
+      }
+    ],
+    "qualitative": [
+      {
+        "metric": "Post-session relaxation score",
+        "target": "≥4.0/5.0",
+        "method": "Optional survey: 'How relaxed do you feel?' (1-5 scale)"
+      },
+      {
+        "metric": "Sense of accomplishment",
+        "target": "≥80% Yes",
+        "method": "Survey: 'Did you feel a sense of accomplishment?' (Yes/No)"
+      }
+    ],
+    "behavioral_signals": [
+      "Long idle times between actions (player savoring, not rushing)",
+      "Repeated bin completion actions (enjoys closure moment)",
+      "Low rage-quit rate (<5% quit within 60s)",
+      "Playtime at night (20:00-23:00) indicates wind-down usage"
+    ]
+  },
+  "development_timeline": {
+    "week_1_2": "Core loop prototype (rock breaking + mineral spawn, gray boxes)",
+    "week_3": "Sorting system (drag-drop bins, validation)",
+    "week_4": "Art pass 1 (replace placeholders with pixel art: rocks, 6 minerals)",
+    "week_5": "Audio integration (5 SFX + 1 music track)",
+    "week_6": "Progression + save (Tier 1 unlocks, save/load tested)",
+    "week_7": "UI polish (HUD, inventory, settings finalized)",
+    "week_8": "Testing + bug fixes (internal playtest, balance tweaks)"
+  }
+}
