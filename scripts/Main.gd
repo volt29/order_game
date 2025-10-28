@@ -10,6 +10,10 @@ var mineral_scene = preload("res://scenes/Mineral.tscn")
 
 func _ready() -> void:
 	print("[Main] Game started")
+
+	# Start background music
+	AudioManager.play_music()
+
 	spawn_rock("stone_rock", Vector2.ZERO)
 
 func spawn_rock(rock_type: String, offset: Vector2) -> void:
@@ -22,6 +26,7 @@ func spawn_rock(rock_type: String, offset: Vector2) -> void:
 
 func _on_rock_broken(rock_type: String, position: Vector2) -> void:
 	print("[Main] Rock broken: %s at %v" % [rock_type, position])
+	SaveSystem.increment_stat("total_rocks_broken")
 	spawn_minerals(rock_type, position)
 
 	# Respawn a new rock after 1 second (for testing)

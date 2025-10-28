@@ -21,6 +21,8 @@ config/icon="res://icon.svg"
 DataLoader="*res://scripts/DataLoader.gd"
 InventoryManager="*res://scripts/InventoryManager.gd"
 ScoreManager="*res://scripts/ScoreManager.gd"
+AudioManager="*res://scripts/AudioManager.gd"
+SaveSystem="*res://scripts/SaveSystem.gd"
 
 [display]
 

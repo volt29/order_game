@@ -24,7 +24,8 @@ func _on_mineral_collected(mineral: RigidBody2D) -> void:
 	# Add to inventory
 	InventoryManager.add_mineral(mineral.mineral_id, 1)
 
-	# TODO: Play SFX "mineral_collect.wav"
+	# Play collection sound
+	AudioManager.play_sfx("mineral_collect")
 
 	# Destroy mineral
 	mineral.queue_free()

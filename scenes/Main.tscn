@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqm3xrj8xvw2f"]
+[gd_scene load_steps=7 format=3 uid="uid://cqm3xrj8xvw2f"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main_script"]
 [ext_resource type="PackedScene" uid="uid://dvxge6kh8u8km" path="res://scenes/CollectionZone.tscn" id="2_collection_zone"]
 [ext_resource type="PackedScene" uid="uid://cn4mtc4y0qv4p" path="res://scenes/UI/InventoryPanel.tscn" id="3_inventory_panel"]
 [ext_resource type="PackedScene" uid="uid://c8yc5xmpd5gvb" path="res://scenes/UI/HUD.tscn" id="4_hud"]
 [ext_resource type="PackedScene" uid="uid://dg3njvb5y5xvj" path="res://scenes/SortingBin.tscn" id="5_sorting_bin"]
+[ext_resource type="PackedScene" uid="uid://settings_menu_001" path="res://scenes/UI/SettingsMenu.tscn" id="6_settings_menu"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_script")
@@ -29,6 +30,8 @@ position = Vector2(960, 540)
 [node name="HUD" parent="UI" instance=ExtResource("4_hud")]
 
 [node name="InventoryPanel" parent="UI" instance=ExtResource("3_inventory_panel")]
+
+[node name="SettingsMenu" parent="UI" instance=ExtResource("6_settings_menu")]
 
 [node name="BinsContainer" type="HBoxContainer" parent="UI"]
 anchors_preset = 7

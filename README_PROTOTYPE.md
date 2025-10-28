@@ -1,8 +1,8 @@
 # Order Game - Core Loop Prototype
 
-**Version:** Prototype v0.1
-**Date:** 2025-10-27
-**Branch:** `proto/core-loop`
+**Version:** Prototype v0.2 (Enhanced)
+**Date:** 2025-10-28
+**Branch:** `claude/proto-core-loop-011CUXTE81tUisGNiqWMCoR8`
 **Engine:** Godot 4.3+
 
 ## Overview
@@ -44,9 +44,9 @@ This is a minimal playable prototype of the **Order Game** core loop:
 |--------|-------|-------------|
 | **Break Rock** | Left Click on rock | Reduces rock HP, breaks when HP reaches 0 |
 | **Collect Minerals** | Move cursor near minerals | Auto-collects minerals within 100px radius |
-| **Sort Mineral** | Click "Red Bin" or "Blue Bin" button | Sorts first matching mineral from inventory |
-| **Pause** | Space | *(Not implemented yet)* |
-| **Settings** | Escape | *(Not implemented yet)* |
+| **Sort Mineral (Drag)** | Drag from inventory, drop on bin | **NEW!** Full drag-drop sorting (v0.2) |
+| **Sort Mineral (Button)** | Click "Red Bin" or "Blue Bin" button | Fallback method, sorts first matching mineral |
+| **Settings** | Escape (ESC) | **NEW!** Opens settings menu with volume controls (v0.2) |
 
 ---
 
@@ -102,27 +102,34 @@ This is a minimal playable prototype of the **Order Game** core loop:
 
 ---
 
-### ✅ Feature 4: Sorting Bins (AC 4.1, simplified)
+### ✅ Feature 4: Sorting Bins (AC 4.1) - **v0.2 ENHANCED**
 
-**Test:**
+**Test (Drag-Drop):** *(NEW in v0.2)*
 1. Collect at least 1 red mineral (Ruby) and 1 blue mineral (Sapphire)
-2. Check inventory panel shows both: e.g., "Ruby Shard ×3", "Sapphire ×2"
-3. Click the **"Red Bin (0/10)"** button
-4. **Expected:** First red mineral from inventory is removed, bin updates to "Red Bin (1/10)"
-5. **Expected:** Score increases by +10 (shown in top-right HUD)
+2. Check inventory panel shows both: e.g., "[#E57373] Ruby Shard ×3"
+3. **Click and hold** on the Ruby item in inventory
+4. **Drag** toward the **"Red Bin (0/10)"**
+5. **Release** mouse button over the bin
+6. **Expected:** Bin flashes green, Ruby removed from inventory, bin updates to "Red Bin (1/10)"
+7. **Expected:** Score increases by +10, "sort_correct" sound plays (if audio files present)
 
-**Test (Mismatch - implicit):**
-- If you have only blue minerals and click Red Bin → nothing happens (no matching minerals)
+**Test (Drag-Drop Mismatch):**
+1. Drag a blue mineral over Red Bin
+2. **Expected:** Cursor shows "not allowed" (no drop occurs)
+3. Release → nothing happens, mineral stays in inventory
+
+**Test (Button Fallback):**
+1. Click the **"Red Bin (0/10)"** button
+2. **Expected:** First red mineral from inventory is sorted (same as drag-drop)
 
 **Test (Bin Complete):**
-1. Sort 10 red minerals into Red Bin
+1. Sort 10 red minerals into Red Bin (via drag or button)
 2. **Expected:** Bin shows "Red Bin (10/10)"
-3. **Expected:** +50 bonus points awarded
-4. **Expected:** After 1 second, bin resets to "Red Bin (0/10)"
+3. **Expected:** +50 bonus points awarded, "bin_complete" sound plays
+4. **Expected:** Game auto-saves (check console: "[SaveSystem] Saved game...")
+5. **Expected:** After 1 second, bin resets to "Red Bin (0/10)"
 
-**Status:** ✅ Implemented (placeholder: click bin button instead of drag-drop)
-
-**Note:** Full drag-and-drop interaction is **not implemented yet**. Current version uses button click as a simplified alternative for prototype testing.
+**Status:** ✅ Fully Implemented (v0.2 - includes full drag-drop + visual feedback)
 
 ---
 
@@ -141,6 +148,83 @@ This is a minimal playable prototype of the **Order Game** core loop:
 3. Combo counter resets to 0
 
 **Status:** ✅ Implemented
+
+---
+
+### ✅ Feature 6: Audio System (AC 5.1) - **v0.2 NEW**
+
+**Test:**
+1. Break a rock → **Expected:** "rock_break.wav" plays (if audio file present)
+2. Collect a mineral → **Expected:** "mineral_collect.wav" plays
+3. Sort a mineral → **Expected:** "sort_correct.wav" plays
+4. Complete a bin → **Expected:** "bin_complete.wav" plays
+5. Trigger 5-combo → **Expected:** "combo.wav" plays
+6. Game starts → **Expected:** "bgm_ambient.ogg" loops (background music)
+
+**How to Add Audio Files:**
+1. Create `audio/sfx/` and `audio/music/` directories (already created)
+2. Add 5 SFX files and 1 music file (see `audio/AUDIO_PLACEHOLDER.md` for specs)
+3. Restart game → audio plays automatically
+
+**Status:** ✅ System Implemented (awaiting audio files - game functions silently without them)
+
+---
+
+### ✅ Feature 7: Pixel Art Sprites (AC 8.1) - **v0.2 NEW**
+
+**Test:**
+1. Add `sprites/rocks/stone_rock.png` (32x32 pixel art)
+2. Add `sprites/minerals/ruby_small.png` (16x16 pixel art)
+3. Restart game → **Expected:** Sprites replace ColorRect placeholders
+
+**How to Add Sprites:**
+- See `sprites/SPRITES_PLACEHOLDER.md` for detailed specifications
+- Rocks: 32x32 PNG, minerals: 16x16 PNG
+- Colorblind-friendly (ruby=triangle, sapphire=square, emerald=circle)
+
+**Fallback:** If no PNG files present, game uses ColorRect placeholders (current state)
+
+**Status:** ✅ System Implemented (awaiting pixel art - game uses ColorRect fallback)
+
+---
+
+### ✅ Feature 8: Settings Menu (AC 7.1-7.3) - **v0.2 NEW**
+
+**Test:**
+1. Press **ESC** key → **Expected:** Settings menu opens, game pauses
+2. Adjust "Master Volume" slider → **Expected:** Audio volume changes in real-time
+3. Adjust "SFX Volume" slider → **Expected:** Test sound plays ("mineral_collect")
+4. Adjust "Music Volume" slider → **Expected:** Background music volume changes
+5. Toggle "Colorblind Mode" → **Expected:** Setting saved (visual changes not implemented yet)
+6. Press **ESC** again or click "Close" → **Expected:** Menu closes, game resumes, settings auto-saved
+
+**Saved Settings:**
+- All volume levels persist between sessions
+- Colorblind mode preference saved to `user://save_data.json`
+
+**Status:** ✅ Fully Implemented (v0.2)
+
+---
+
+### ✅ Feature 9: Save System (AC 9.1-9.3) - **v0.2 NEW**
+
+**Test:**
+1. Play game, earn 500 points, break 10 rocks, sort 50 minerals
+2. Complete a bin → **Expected:** Console shows "[SaveSystem] Saved game..."
+3. Close game, reopen → **Expected:** High score persists (shown in console on load)
+4. Open settings → **Expected:** Volume sliders match saved values
+
+**What Gets Saved:**
+- **Settings:** Master/SFX/Music volume, Colorblind mode
+- **Progress:** High score, total rocks broken, total minerals sorted, total combos
+- **Location:** `user://save_data.json` (OS-specific Godot user data directory)
+
+**Auto-Save Triggers:**
+- Bin complete (10/10 sorted)
+- Settings menu closed
+- Manual: `SaveSystem.save_game()` called
+
+**Status:** ✅ Fully Implemented (v0.2)
 
 ---
 
@@ -166,15 +250,16 @@ This is a minimal playable prototype of the **Order Game** core loop:
 
 ---
 
-## Known Limitations (Prototype)
+## Known Limitations (Prototype v0.2)
 
-1. **No drag-and-drop sorting**: Click bin button to sort first matching mineral (simplified for prototype).
-2. **No audio**: Placeholder only (SFX/music not implemented).
-3. **No settings menu**: Pause/Esc not functional.
-4. **No save system**: Progress resets on game close.
-5. **Limited visual polish**: ColorRect placeholders instead of pixel art sprites.
+1. ~~**No drag-and-drop sorting**~~ ✅ **FIXED in v0.2**: Full drag-drop implemented
+2. **No audio files**: Audio *system* implemented, but requires WAV/OGG files to be added (see `audio/AUDIO_PLACEHOLDER.md`)
+3. ~~**No settings menu**~~ ✅ **FIXED in v0.2**: Settings accessible via ESC, includes volume controls
+4. ~~**No save system**~~ ✅ **FIXED in v0.2**: Auto-save on bin complete, persists high score & settings
+5. **No pixel art**: Sprite *system* implemented, but requires PNG files to be added (see `sprites/SPRITES_PLACEHOLDER.md`). Currently uses ColorRect placeholders.
 6. **Auto-respawn rocks**: Rocks respawn automatically every 1 second for testing (not final behavior).
-7. **No mobile controls**: PC mouse/keyboard only.
+7. **No mobile controls**: PC mouse/keyboard only (touchscreen not implemented yet).
+8. **Colorblind mode visual**: Setting saves, but visual enhancements (shape outlines, patterns) not implemented yet.
 
 ---
 
@@ -184,17 +269,20 @@ This is a minimal playable prototype of the **Order Game** core loop:
 
 - **DataLoader**: Loads `data/minerals.json` and `data/rocks.json` at startup
 - **InventoryManager**: Tracks collected mineral counts, emits `inventory_changed` signal
-- **ScoreManager**: Tracks score and combo, emits `score_changed` and `combo_triggered` signals
+- **ScoreManager**: Tracks score and combo, emits `score_changed` and `combo_triggered` signals, saves high score
+- **AudioManager**: *(v0.2 NEW)* Manages all audio playback (5 SFX + 1 music), volume controls
+- **SaveSystem**: *(v0.2 NEW)* Handles persistent data (settings, high score, stats), auto-saves to `user://save_data.json`
 
 ### Key Scenes
 
-- **Main.tscn**: Root scene, spawns rocks, handles core loop orchestration
-- **Rock.tscn**: StaticBody2D with HP, clickable, emits `rock_broken` signal
-- **Mineral.tscn**: RigidBody2D with physics, auto-detects resting state
+- **Main.tscn**: Root scene, spawns rocks, handles core loop orchestration, starts background music
+- **Rock.tscn**: StaticBody2D with HP, clickable, emits `rock_broken` signal, supports sprite + ColorRect fallback
+- **Mineral.tscn**: RigidBody2D with physics, auto-detects resting state, supports sprite + ColorRect fallback
 - **CollectionZone.tscn**: Area2D (100px radius) that follows cursor, collects resting minerals
-- **SortingBin.tscn**: UI button with validation logic (checks mineral color/shape)
+- **SortingBin.tscn**: *(v0.2 ENHANCED)* Drag-drop target with `_can_drop_data()` + `_drop_data()`, visual feedback (green flash)
 - **UI/HUD.tscn**: Score + combo display (top-right)
-- **UI/InventoryPanel.tscn**: Lists collected minerals with counts (bottom)
+- **UI/InventoryPanel.tscn**: *(v0.2 ENHANCED)* Lists minerals with draggable items (`_get_drag_data()`)
+- **UI/SettingsMenu.tscn**: *(v0.2 NEW)* ESC-triggered menu, volume sliders, colorblind toggle, pauses game
 
 ### Data-Driven Content
 
@@ -250,15 +338,23 @@ Add to `data/rocks.json` loot table → restart game → new mineral appears!
 
 ---
 
-## Next Steps (Post-Prototype)
+## Next Steps (Post-Prototype v0.2)
 
-1. **Full drag-and-drop sorting**: Replace button click with `_get_drag_data()` / `_can_drop_data()` Godot API
-2. **Audio integration**: Add 5 core SFX + 1 ambient music track
-3. **Visual polish**: Replace ColorRect with pixel art sprites (16x16, 32x32)
-4. **Settings menu**: Pause, volume sliders, colorblind mode toggle
-5. **Save system**: Auto-save on bin complete, restore on launch
-6. **Mobile controls**: Touch + haptics, gesture-based sorting
-7. **Progression system**: Unlock Tier 1 (Granite Rock, +3 minerals) at 20 rocks broken
+### ✅ COMPLETED in v0.2:
+1. ~~**Full drag-and-drop sorting**~~ → Implemented with `_get_drag_data()` / `_can_drop_data()`
+2. ~~**Audio integration**~~ → System ready, awaiting 5 SFX + 1 music file
+3. ~~**Visual polish**~~ → Sprite system ready, awaiting pixel art PNG files
+4. ~~**Settings menu**~~ → ESC-triggered, volume sliders, colorblind toggle
+5. ~~**Save system**~~ → Auto-save on bin complete, restores on launch
+
+### 🎯 TODO for Production MVP:
+6. **Add actual audio files**: Create/source 5 SFX + 1 music track (see `audio/AUDIO_PLACEHOLDER.md`)
+7. **Add actual pixel art**: Create/source 2 rock sprites + 6 mineral sprites (see `sprites/SPRITES_PLACEHOLDER.md`)
+8. **Colorblind mode visuals**: Implement shape outlines, patterns, or increased contrast
+9. **Mobile controls**: Touch + haptics, gesture-based sorting
+10. **Progression system**: Unlock Tier 1 (Granite Rock, +3 minerals) at 20 rocks broken
+11. **Tutorial**: First-time user guidance (arrows, tooltips)
+12. **Juice & Polish**: Particle effects (rock shatter, sparkles), screen shake, more animations
 
 ---
 
