@@ -19,9 +19,20 @@ func _ready() -> void:
 		var rock_data = DataLoader.rocks[rock_type]
 		max_hp = rock_data.hp
 		current_hp = max_hp
-		# Set color from rock data
-		if rock_data.has("color_hex"):
-			$ColorRect.color = Color(rock_data.color_hex)
+
+		# Try to load sprite texture
+		var sprite_path = "res://sprites/rocks/%s.png" % rock_type
+		if FileAccess.file_exists(sprite_path):
+			var texture = load(sprite_path)
+			if texture:
+				$Sprite2D.texture = texture
+				$Sprite2D.visible = true
+				$ColorRect.visible = false
+				print("[Rock] Loaded sprite: %s" % sprite_path)
+		else:
+			# Fallback to ColorRect
+			if rock_data.has("color_hex"):
+				$ColorRect.color = Color(rock_data.color_hex)
 	else:
 		push_warning("[Rock] Rock type not found: " + rock_type)
 		current_hp = max_hp
@@ -43,19 +54,21 @@ func take_damage(amount: int) -> void:
 
 func _break_rock() -> void:
 	emit_signal("rock_broken", rock_type, global_position)
-	# TODO: Play SFX "rock_break.wav"
+	AudioManager.play_sfx("rock_break")
 	# TODO: Spawn shatter particles
 	queue_free()
 
 func _update_visual() -> void:
-	# Show cracks based on HP (simple version: darken color)
+	# Show cracks based on HP (simple version: darken)
 	if current_hp < max_hp:
 		var hp_ratio = float(current_hp) / float(max_hp)
-		$ColorRect.modulate = Color(hp_ratio, hp_ratio, hp_ratio, 1.0)
+		var target = $Sprite2D if $Sprite2D.visible else $ColorRect
+		target.modulate = Color(hp_ratio, hp_ratio, hp_ratio, 1.0)
 
 func _flash_white() -> void:
 	# Simple flash effect: modulate to white for 0.1s
-	var original_modulate = $ColorRect.modulate
-	$ColorRect.modulate = Color(1.5, 1.5, 1.5, 1.0)
+	var target = $Sprite2D if $Sprite2D.visible else $ColorRect
+	var original_modulate = target.modulate
+	target.modulate = Color(1.5, 1.5, 1.5, 1.0)
 	await get_tree().create_timer(0.1).timeout
-	$ColorRect.modulate = original_modulate
+	target.modulate = original_modulate

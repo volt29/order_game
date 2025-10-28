@@ -17,12 +17,18 @@ func add_points(amount: int) -> void:
 	emit_signal("score_changed", score)
 	print("[ScoreManager] +%d points (total: %d)" % [amount, score])
 
+	# Check for new high score
+	if score > SaveSystem.get_high_score():
+		SaveSystem.set_high_score(score)
+
 func increment_combo() -> void:
 	combo_count += 1
 	if combo_count == 5:
 		# AC 6.3: Optional Combo Bonus (5 correct sorts in a row)
 		add_points(25)
 		emit_signal("combo_triggered", 25)
+		AudioManager.play_sfx("combo")
+		SaveSystem.increment_stat("total_combos")
 		combo_count = 0
 		print("[ScoreManager] COMBO! +25 bonus")
 

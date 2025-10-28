@@ -16,9 +16,19 @@ func init(id: String, spawn_pos: Vector2) -> void:
 	# Load mineral data from DataLoader
 	if DataLoader.minerals.has(mineral_id):
 		mineral_data = DataLoader.minerals[mineral_id]
-		# Set color from mineral data
-		if mineral_data.has("color_hex"):
-			$ColorRect.color = Color(mineral_data.color_hex)
+
+		# Try to load sprite texture
+		var sprite_path = "res://sprites/minerals/%s.png" % mineral_id
+		if FileAccess.file_exists(sprite_path):
+			var texture = load(sprite_path)
+			if texture:
+				$Sprite2D.texture = texture
+				$Sprite2D.visible = true
+				$ColorRect.visible = false
+		else:
+			# Fallback to ColorRect
+			if mineral_data.has("color_hex"):
+				$ColorRect.color = Color(mineral_data.color_hex)
 	else:
 		push_warning("[Mineral] Mineral not found: " + mineral_id)
 
